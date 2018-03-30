@@ -1,6 +1,7 @@
 const path = require('path')
 const UglifyPlugin = require('uglifyjs-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 module.exports = {
   entry: './src/index.js',
@@ -18,6 +19,26 @@ module.exports = {
           path.resolve(__dirname, 'src')
         ],
         use: 'babel-loader',
+      },
+      {
+        test: /\.less$/,
+        include: [
+          path.resolve(__dirname, 'src')
+        ],
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: [
+            'css-loader',
+            'less-loader',
+          ],
+        }),
+      },
+      {
+        test: /\.(png|jpg|gif)$/,
+        include: [
+          path.resolve(__dirname, 'src')
+        ],
+        use: 'file-loader',
       },
     ],
   },
@@ -39,8 +60,9 @@ module.exports = {
     // 这其实也是我们命令中的 --mode production 的效果，后续的小节会介绍 webpack 的 mode 参数
     new HtmlWebpackPlugin({
       filename: 'index.html', // 配置输出文件名和路径
-      favicon: 'src/assets/images/favicon.png',
-      template: 'src/assets/index.html', // 配置文件模板
+      favicon: 'favicon.png',
+      template: 'index.html', // 配置文件模板
     }),
+    new ExtractTextPlugin('index.css'),
   ],
 }
