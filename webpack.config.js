@@ -1,9 +1,12 @@
+const webpack = require('webpack')
 const path = require('path')
 const UglifyPlugin = require('uglifyjs-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
-module.exports = {
+module.exports = (env, argv) => ({
   entry: './src/index.js',
 
   output: {
@@ -63,6 +66,21 @@ module.exports = {
       favicon: 'favicon.png',
       template: 'index.html', // 配置文件模板
     }),
-    new ExtractTextPlugin('index.css'),
+    new ExtractTextPlugin('[name].css'),
+    new webpack.DefinePlugin({
+      PRODUCTION: JSON.stringify(true), // const PRODUCTION = true
+      VERSION: JSON.stringify('5fa3b9'), // const VERSION = '5fa3b9'
+      BROWSER_SUPPORTS_HTML5: true, // const BROWSER_SUPPORTS_HTML5 = 'true'
+      TWO: '1+1', // const TWO = 1 + 1,
+      CONSTANTS: {
+        APP_VERSION: JSON.stringify('1.1.2') // const CONSTANTS = { APP_VERSION: '1.1.2' }
+      },
+      MODE: JSON.stringify(argv.mode)
+    }),
+    new CopyWebpackPlugin([
+      { from: 'src/file.txt', to: 'file.txt', }, // 顾名思义，from 配置来源，to 配置目标路径
+      { from: 'src/*.ico', to: 'build/*.ico' }, // 配置项可以使用 glob
+      // 可以配置很多项复制规则
+    ]),
   ],
-}
+})
