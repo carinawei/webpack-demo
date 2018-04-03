@@ -4,9 +4,9 @@ const UglifyPlugin = require('uglifyjs-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
+const jquery = require('jquery')
 
-module.exports = (env, argv) => ({
+module.exports = {
   entry: './src/index.js',
 
   output: {
@@ -52,7 +52,6 @@ module.exports = (env, argv) => ({
       "node_modules",
       path.resolve(__dirname, 'src')
     ],
-
     extensions: [".wasm", ".mjs", ".js", ".json", ".jsx"],
   },
 
@@ -75,12 +74,15 @@ module.exports = (env, argv) => ({
       CONSTANTS: {
         APP_VERSION: JSON.stringify('1.1.2') // const CONSTANTS = { APP_VERSION: '1.1.2' }
       },
-      MODE: JSON.stringify(argv.mode)
+      // MODE: JSON.stringify(argv.mode)
     }),
     new CopyWebpackPlugin([
       { from: 'src/file.txt', to: 'file.txt', }, // 顾名思义，from 配置来源，to 配置目标路径
       { from: 'src/*.ico', to: 'build/*.ico' }, // 配置项可以使用 glob
       // 可以配置很多项复制规则
     ]),
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+    })
   ],
-})
+}
